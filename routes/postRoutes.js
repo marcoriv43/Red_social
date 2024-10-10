@@ -5,7 +5,7 @@ const postController = require('../controllers/postController');
 // Rutas de publicaciones
 router.post('/', postController.createPost);
 router.get('/', postController.getPosts);
-router.get('/user/:userId', postController.getUserPosts);
+router.post('/:id/comment', postController.commentPosts);
 router.put('/:id', postController.updatePost);
 router.delete('/:id', postController.deletePost);
 
