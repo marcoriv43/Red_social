@@ -24,11 +24,19 @@ class UserController {
         res.status(200).json({ message: `Usuario ${id} actualizado`, updatedUser: { name, email } });
     }
 
-    // Método para eliminar un usuario
-    deleteUser(req, res) {
+       // Método para eliminar un usuario
+       deleteUser(req, res) {
         const { id } = req.params;
-        // Aquí eliminarías el usuario con ID = id
-        res.status(200).json({ message: `Usuario ${id} eliminado` });
+        // Buscar el usuario por ID
+        const existingUserIndex = users.findIndex(user => user.id === parseInt(id));
+        if (existingUserIndex !== -1) {
+            // Eliminar el usuario encontrado
+            users.splice(existingUserIndex, 1);
+
+            res.status(200).json({ message: `Usuario ${id} eliminado` });
+        } else {
+            res.status(404).json({ message: `No se encontró el usuario con ID ${id}` });
+        }
     }
 }
 

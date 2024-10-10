@@ -36,19 +36,40 @@ class PostController {
         console.log(comment)
     }
 
-    // Editar una publicación
-    updatePost(req, res) {
+     // Editar una publicación
+     updatePost(req, res) {
         const { id } = req.params;
         const { title, description, url } = req.body;
-        // Aquí puedes actualizar la publicación con ID = id
-        res.status(200).json({ message: `Publicación ${id} actualizada`, updatedPost: { title, description, url } });
+        const existingPostIndex = posts.findIndex(post => post.id === parseInt(id));
+        if (existingPostIndex !== -1) {
+            // Actualizar el usuario encontrado
+            posts[existingPostIndex] = {
+                ...posts[existingPostIndex],
+                title,
+                description,
+                url
+            };
+
+            res.status(200).json({ message: `La publicarion ${id} fue actualizada`, updatedPosts: posts[existingPostIndex] });
+        } else {
+            res.status(404).json({ message: `No se encontró la publicación con ID ${id}` });
+        }
+
+
     }
 
     // Eliminar una publicación
     deletePost(req, res) {
         const { id } = req.params;
-        // Aquí eliminarías la publicación con ID = id
-        res.status(200).json({ message: `Publicación ${id} eliminada` });
+        const existingPostIndex = posts.findIndex(post => post.id === parseInt(id));
+        if (existingPostIndex !== -1) {
+            // Eliminar el usuario encontrado
+            users.splice(existingPostIndex, 1);
+          // Aquí eliminarías la publicación con ID = id
+            res.status(200).json({ message: `Publicación ${id} eliminada` });
+        } else {
+            res.status(404).json({ message: `No se encontró el usuario con ID ${id}` });
+        }        
     }
 }
 
