@@ -19,6 +19,8 @@ app.set('views', path.join(__dirname, 'views'));
 app.engine('.hbs', exphbs({
   defaultLayout: 'index',
   layoutsDir: path.join(app.get('views'), 'layouts'),
+  feedDir: path.join(app.get('views'), 'feed'),
+  homeDir: path.join(app.get('views'), 'home'),
   partialsDir: path.join(app.get('views'), 'partials'),
   extname: '.hbs',
 }));
@@ -27,6 +29,8 @@ app.set('view engine', '.hbs');
 // Rutas
 var assets = require("./routes/assets");
 app.use("/assets",assets); 
+var homeRouter = require("./routes/home");
+app.use("/",  homeRouter);
 var postsRouter = require('./routes/post');
 app.use('/post', postsRouter);
 
@@ -43,7 +47,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.render('layouts/error');
 });
 
 app.listen(app.get('port'), () => {
@@ -51,4 +55,3 @@ app.listen(app.get('port'), () => {
 });
 
 module.exports = app;
-

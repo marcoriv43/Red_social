@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 20-10-2024 a las 00:16:54
+-- Tiempo de generación: 23-10-2024 a las 00:06:17
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 8.2.0
 
@@ -31,20 +31,40 @@ CREATE TABLE `post` (
   `id_post` int(11) NOT NULL,
   `title_post` text NOT NULL,
   `description_post` longtext NOT NULL,
-  `url_post` text NOT NULL
+  `url_post` text NOT NULL,
+  `id_users_post` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `post`
 --
 
-INSERT INTO `post` (`id_post`, `title_post`, `description_post`, `url_post`) VALUES
-(1, 'publicacion 1', 'descripcion 1', 'https://static.nationalgeographic.es/files/styles/image_3200/public/75552.ngsversion.1422285553360.jpg?w=1900&h=1267'),
-(2, 'Publicacion 2', 'Descripcion 2', 'http://localhost:3000/assets/img/descarga.jpeg'),
-(15, 'Perro', 'con cejasss', 'https://ih1.redbubble.net/image.5437205904.1040/bg,f8f8f8-flat,750x,075,f-pad,750x1000,f8f8f8.jpg'),
-(16, 'Teneré', 'Níger', 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiUXeQt5nvevRkQ8JFqsdA1mkjOfcMPQu26SP1m6cZdDRnjskExhEbDnbFAZOx2o1pMUoeWbOvlDGBGvfCehpxpGQahxcbmU8sDXBCQ3zedAGduK_OtgabSoLInhXenUIM2kpecro58AZpR/s1600/index2.jpg'),
-(17, 'el rey', 'roberto me la pela', 'https://diariocorreo.pe/resizer/LDzyLNboIj9mm_zHfpLrvsEREEc=/1200x1200/smart/filters:format(jpeg):quality(75)/cloudfront-us-east-1.images.arcpublishing.com/elcomercio/V5FUUTVTIJG7XEXH2SEIGTA6BI.jpg'),
-(18, '', '', '');
+INSERT INTO `post` (`id_post`, `title_post`, `description_post`, `url_post`, `id_users_post`) VALUES
+(3, 'Publicacion 1', 'Descripción 1', '/assets/img/descarga.jpeg', 4),
+(5, 'asd', 'asd', 'asd', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `users`
+--
+
+CREATE TABLE `users` (
+  `id_users` int(11) NOT NULL,
+  `username_users` varchar(10) NOT NULL,
+  `password_users` varchar(25) NOT NULL,
+  `email_users` varchar(15) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `users`
+--
+
+INSERT INTO `users` (`id_users`, `username_users`, `password_users`, `email_users`) VALUES
+(1, 'Daniel', 'etesech', 'd@gmail.com'),
+(2, 'alejandro', '1234567.', 'claudiatips123@'),
+(3, 'Alegabriel', '1234567.', 'av703069@gmail.'),
+(4, 'Marco', '1234567', 'marco@gmail.com');
 
 --
 -- Índices para tablas volcadas
@@ -54,7 +74,15 @@ INSERT INTO `post` (`id_post`, `title_post`, `description_post`, `url_post`) VAL
 -- Indices de la tabla `post`
 --
 ALTER TABLE `post`
-  ADD PRIMARY KEY (`id_post`);
+  ADD PRIMARY KEY (`id_post`),
+  ADD KEY `id_users_post` (`id_users_post`);
+
+--
+-- Indices de la tabla `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id_users`),
+  ADD KEY `id_users` (`id_users`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -64,7 +92,23 @@ ALTER TABLE `post`
 -- AUTO_INCREMENT de la tabla `post`
 --
 ALTER TABLE `post`
-  MODIFY `id_post` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id_post` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT de la tabla `users`
+--
+ALTER TABLE `users`
+  MODIFY `id_users` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `post`
+--
+ALTER TABLE `post`
+  ADD CONSTRAINT `post_ibfk_1` FOREIGN KEY (`id_users_post`) REFERENCES `users` (`id_users`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
