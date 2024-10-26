@@ -20,4 +20,21 @@ router.get('/', (req, res, next)=>{
     });
 });
 
+router.post('/', (req, res, next)=>{
+    new Promise((resolve, reject) => {
+        postController.createPost(req.body, (error, data)=>{        
+            if (error) {
+                reject(error);
+            } else {
+                resolve(data);
+            }
+        });
+    }).then((data)=>{
+        res.redirect('/post');
+    }).catch((error)=>{
+        res.render('error', {error});
+    });
+});
+
+
 module.exports = router;
