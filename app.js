@@ -1,5 +1,6 @@
 var createError = require('http-errors');
 var express = require('express');
+var Handlebars = require('handlebars');
 var exphbs = require('express-handlebars')
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -16,14 +17,16 @@ app.use(cookieParser());
 
 // Motor visual
 app.set('views', path.join(__dirname, 'views'));
-app.engine('.hbs', exphbs({
+var hbs = exphbs.create({
   defaultLayout: 'index',
-  layoutsDir: path.join(app.get('views'), 'layouts'),
-  feedDir: path.join(app.get('views'), 'feed'),
-  homeDir: path.join(app.get('views'), 'home'),
   partialsDir: path.join(app.get('views'), 'partials'),
+  feedDir: path.join(app.get('views'), 'feed'),
   extname: '.hbs',
-}));
+});
+Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
+  return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+});
+app.engine('.hbs', hbs.engine);
 app.set('view engine', '.hbs');
 
 // Rutas
@@ -33,6 +36,8 @@ var homeRouter = require("./routes/home");
 app.use("/",  homeRouter);
 var postsRouter = require('./routes/post');
 app.use('/post', postsRouter);
+var friendsRouter = require('./routes/friends');
+app.use('/friends', friendsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
