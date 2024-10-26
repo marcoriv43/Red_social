@@ -7,7 +7,7 @@ class PostController {
         let err ="";
         let data = [];
         return new Promise((resolve, reject) => {
-            conexion.query('SELECT * FROM post WHERE id_users_post=?', [req], (error, results, fields) => {
+            conexion.query('SELECT DISTINCT id_users, id_post, title_post, description_post, url_post, id_users_post FROM users LEFT JOIN friends ON id_users = id_users_friend1 AND status_friends=1 OR id_users = id_users_friend2 AND status_friends=1 LEFT JOIN post ON id_users_friend1 = id_users_post OR id_users_friend2 = id_users_post WHERE id_users = ? UNION SELECT DISTINCT id_users, id_post, title_post, description_post, url_post, id_users_post FROM users JOIN post ON id_users = id_users_post WHERE id_users = ? AND NOT EXISTS (SELECT 1 FROM friends WHERE id_users = id_users_friend1 AND status_friends=1 OR id_users = id_users_friend2 AND status_friends=1)ORDER BY id_post DESC;', [req, req], (error, results, fields) => {
                 if (error) {
                     err += error
                     reject(error);

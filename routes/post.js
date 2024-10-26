@@ -81,7 +81,7 @@ router.get('/delete/:user/:id', (req, res, next)=>{
             }
         });
     }).then((data)=>{
-        res.redirect('/post');
+        res.redirect('/post/'+req.params.user);
     }).catch((error)=>{
         res.render('layouts/error', {error});
     });
