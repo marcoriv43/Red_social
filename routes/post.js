@@ -4,9 +4,9 @@ const router = express.Router();
 const postController = require('../controllers/postController');
 
 // Rutas de usuario
-router.get('/', (req, res, next)=>{
+router.get('/:user', (req, res, next)=>{
     new Promise((resolve, reject) =>{        
-        postController.getPosts("string", (error, data)=>{        
+        postController.getPosts(req.params.user, (error, data)=>{        
             if (error) {
                 reject(error);
             } else {
@@ -14,15 +14,16 @@ router.get('/', (req, res, next)=>{
             }
         });
     }).then((data)=>{
-        res.render('feed', {data});                        
+        const ActualUser = req.params.user;
+        res.render('feed/feed', {data, ActualUser});                        
     }).catch((error)=>{
-        res.render('error', {error});
+        res.render('layouts/error', {error});
     });
 });
 
-router.post('/', (req, res, next)=>{
+router.post('/:user', (req, res, next)=>{
     new Promise((resolve, reject) => {
-        postController.createPost(req.body, (error, data)=>{        
+        postController.createPost(req.body,req.params.user, (error, data)=>{        
             if (error) {
                 reject(error);
             } else {
@@ -30,13 +31,13 @@ router.post('/', (req, res, next)=>{
             }
         });
     }).then((data)=>{
-        res.redirect('/post');
+        res.redirect('/post/'+req.params.user);
     }).catch((error)=>{
-        res.render('error', {error});
+        res.render('layouts/error', {error});
     });
 });
 
-router.get('/edit/:id', (req, res, next)=>{
+router.get('/edit/:user/:id', (req, res, next)=>{
     new Promise((resolve, reject) =>{        
         postController.getUpdatePost(req.params, (error, data)=>{        
             if (error) {
@@ -47,13 +48,14 @@ router.get('/edit/:id', (req, res, next)=>{
         });
     }).then((data)=>{        
         data = data[0]
-        res.render('feedEdit', {data});
+        const ActualUser = req.params.user;
+        res.render('feed/feedEdit', {data, ActualUser});
     }).catch((error)=>{
-        res.render('error', {error});
+        res.render('layouts/error', {error});
     });
 });
 
-router.post('/edit/:id', (req, res, next)=>{
+router.post('/edit/:user/:id', (req, res, next)=>{
     new Promise((resolve, reject) =>{        
         postController.updatePost(req.params, req.body, (error, data)=>{        
             if (error) {
@@ -63,13 +65,13 @@ router.post('/edit/:id', (req, res, next)=>{
             }
         });
     }).then((data)=>{
-        res.redirect('/post');
+        res.redirect('/post/'+req.params.user);
     }).catch((error)=>{
-        res.render('error', {error});
+        res.render('layouts/error', {error});
     });
 });
 
-router.get('/delete/:id', (req, res, next)=>{
+router.get('/delete/:user/:id', (req, res, next)=>{
     new Promise((resolve, reject) => {
         postController.deletePost(req.params, (error, data)=>{        
             if (error) {
@@ -81,7 +83,7 @@ router.get('/delete/:id', (req, res, next)=>{
     }).then((data)=>{
         res.redirect('/post');
     }).catch((error)=>{
-        res.render('error', {error});
+        res.render('layouts/error', {error});
     });
 });
 

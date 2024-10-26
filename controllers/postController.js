@@ -7,7 +7,7 @@ class PostController {
         let err ="";
         let data = [];
         return new Promise((resolve, reject) => {
-            conexion.query('SELECT * FROM `post`', (error, results, fields) => {
+            conexion.query('SELECT * FROM post WHERE id_users_post=?', [req], (error, results, fields) => {
                 if (error) {
                     err += error
                     reject(error);
@@ -17,20 +17,21 @@ class PostController {
                 }
             });
             setTimeout(()=>{
-                res(err != '' ? new Error(error):null, data);
+                res(err != '' ? new Error(err):null, data);
             },250);
         });        
     }
 
     // Crear una nueva publicación
-    createPost(req, res) {
+    createPost(body, user, res) {
         let err ="";
         let data=[];
-        const { title, description, url } = req;        
+        const { title, description, url } = body;        
         let newPost = {
             "title_post": title,
             "description_post": description,
-            "url_post": url
+            "url_post": url,
+            "id_users_post": user
         }
         return new Promise((resolve, reject) => {
             conexion.query('INSERT INTO `post` set ?', [newPost], (error, results, fields) => {
@@ -43,7 +44,7 @@ class PostController {
                 }
             });
             setTimeout(()=>{
-                res(err != '' ? new Error(error):null, data);
+                res(err != '' ? new Error(err):null, data);
             },250);
         });      
     }
@@ -54,7 +55,7 @@ class PostController {
         let err = "";
         let data = [];
         //Buscar el usurio por Id
-        const id = params.id;
+        const id = params.id;        
         return new Promise((resolve, reject) => {
             conexion.query('SELECT * FROM `post` WHERE `id_post` = ?', [id], (error, results, fields) => {
                 if (error) {
@@ -66,7 +67,7 @@ class PostController {
                 }
             });
             setTimeout(()=>{
-                res(err != '' ? new Error(error):null, data);
+                res(err != '' ? new Error(err):null, data);
             },250);
         });                     
     }
@@ -93,7 +94,7 @@ class PostController {
                 }
             });
             setTimeout(()=>{
-                res(err != '' ? new Error(error):null, data);
+                res(err != '' ? new Error(err):null, data);
             },250);
         });   
     }
@@ -114,7 +115,7 @@ class PostController {
                 }
             });
             setTimeout(()=>{
-                res(err != '' ? new Error(error):null, data);
+                res(err != '' ? new Error(err):null, data);
             },250);
         });   
     }
