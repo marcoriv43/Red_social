@@ -36,10 +36,10 @@
                     <li>{{email_users}}</li>
                     <li>
                         <div class="w3-container">
-                            <form action="/friends/accept/{{../ActualUser}}/{{id_users}}" method="post">
+                            <form action="/friends/accept/{{id_users}}" method="post">
                                 <button class="w3-green" type="submit">Aceptar</button>
                             </form> 
-                            <form action="/friends/decline/{{../ActualUser}}/{{id_users}}" method="post">
+                            <form action="/friends/decline/{{id_users}}" method="post">
                                 <button class="w3-red" type="submit">Rechazar</button>
                             </form>                             
                         </div>     
@@ -59,7 +59,7 @@
                     <li>{{email_users}}</li>
                     <li>
                         <div class="w3-container">
-                            <form action="/friends/add/{{../ActualUser}}/{{id_users}}" method="post">
+                            <form action="/friends/add/{{id_users}}" method="post">
                                 <button class="w3-blue" type="submit">Agregar</button>
                             </form>                         
                         </div>     
