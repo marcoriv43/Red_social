@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
-
+const auth = require('../helpers/auth');
 const postController = require('../controllers/postController');
 
 // Rutas de usuario
-router.get('/:user', (req, res, next)=>{
+router.get('/', auth.verifyToken, (req, res, next)=>{
     new Promise((resolve, reject) =>{        
-        postController.getPosts(req.params.user, (error, data)=>{        
+        postController.getPosts(req, (error, data)=>{        
             if (error) {
                 reject(error);
             } else {
@@ -14,16 +14,17 @@ router.get('/:user', (req, res, next)=>{
             }
         });
     }).then((data)=>{
-        const ActualUser = req.params.user;
-        res.render('feed/feed', {data, ActualUser});                        
+        const typeUser = req.session.typeUser;
+        const ActualUser = req.session.userId;                                
+        res.render('feed/feed', {data, ActualUser, typeUser});                        
     }).catch((error)=>{
         res.render('layouts/error', {error});
     });
 });
 
-router.post('/:user', (req, res, next)=>{
+router.post('/', auth.verifyToken, (req, res, next)=>{
     new Promise((resolve, reject) => {
-        postController.createPost(req.body,req.params.user, (error, data)=>{        
+        postController.createPost(req, (error, data)=>{        
             if (error) {
                 reject(error);
             } else {
@@ -31,15 +32,15 @@ router.post('/:user', (req, res, next)=>{
             }
         });
     }).then((data)=>{
-        res.redirect('/post/'+req.params.user);
+        res.redirect('/post');
     }).catch((error)=>{
         res.render('layouts/error', {error});
     });
 });
 
-router.get('/edit/:user/:id', (req, res, next)=>{
+router.get('/edit/:id', auth.verifyToken, (req, res, next)=>{
     new Promise((resolve, reject) =>{        
-        postController.getUpdatePost(req.params, (error, data)=>{        
+        postController.getUpdatePost(req, (error, data)=>{        
             if (error) {
                 reject(error);
             } else {
@@ -48,16 +49,16 @@ router.get('/edit/:user/:id', (req, res, next)=>{
         });
     }).then((data)=>{        
         data = data[0]
-        const ActualUser = req.params.user;
+        const ActualUser = req.session.userId;    
         res.render('feed/feedEdit', {data, ActualUser});
     }).catch((error)=>{
         res.render('layouts/error', {error});
     });
 });
 
-router.post('/edit/:user/:id', (req, res, next)=>{
+router.post('/edit/:id', auth.verifyToken, (req, res, next)=>{
     new Promise((resolve, reject) =>{        
-        postController.updatePost(req.params, req.body, (error, data)=>{        
+        postController.updatePost(req, (error, data)=>{        
             if (error) {
                 reject(error);
             } else {
@@ -65,15 +66,15 @@ router.post('/edit/:user/:id', (req, res, next)=>{
             }
         });
     }).then((data)=>{
-        res.redirect('/post/'+req.params.user);
+        res.redirect('/post');
     }).catch((error)=>{
         res.render('layouts/error', {error});
     });
 });
 
-router.get('/delete/:user/:id', (req, res, next)=>{
+router.get('/delete/:id', auth.verifyToken, (req, res, next)=>{
     new Promise((resolve, reject) => {
-        postController.deletePost(req.params, (error, data)=>{        
+        postController.deletePost(req, (error, data)=>{        
             if (error) {
                 reject(error);
             } else {
@@ -81,7 +82,7 @@ router.get('/delete/:user/:id', (req, res, next)=>{
             }
         });
     }).then((data)=>{
-        res.redirect('/post/'+req.params.user);
+        res.redirect('/post');
     }).catch((error)=>{
         res.render('layouts/error', {error});
     });
