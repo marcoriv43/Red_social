@@ -1,53 +1,49 @@
-const conexion = require('../db/database');
+const User = require('../models/userModel');
 
 class userController{
 
-    createUsers(req, res) {
-        let err ="";
-        let data=[];
-        const { username, password, email } = req;        
-        let newUser = {
-            "username_users": username,
-            "password_users": password,
-            "email_users": email
-        }        
-        return new Promise((resolve, reject) => {
-            conexion.query('INSERT INTO users set ?', [newUser], (error, results, fields) => {
-                if (error) {
-                    err += error
-                    reject(error);
-                } else {
-                    data = results;               
-                    resolve(data);               
-                }
-            });
-            setTimeout(()=>{
-                res(err != '' ? new Error(err):null, data);
-            },250);
-        });
-    }
-
-    confirmUsers(req, res) {
+    async createUsers(req, res) {
         let err = "";
         let data = [];
-        //Buscar el usurio por email
-        const {username, password} = req;
-        return new Promise((resolve, reject) => {
-            conexion.query('SELECT * FROM users WHERE username_users = ? AND password_users = ?', [username, password], (error, results, fields) => {
-                if (error) {
-                    err += error
-                    reject(error);
-                } else {
-                    data = results;                      
-                    resolve(data);               
-                }
-            });
-            setTimeout(()=>{
-                res(err != '' ? new Error(err):null, data);
-            },250);
-        });                     
+        try {            
+            let crearUsuario = await User.crearUsers(req);
+            return res(err != '' ? new Error(err):null, data=crearUsuario);            
+        } catch (error) {                        
+            console.error(error);
+            err += error;
+            res(err != '' ? new Error(err):null, data);
+        }                            
     }
 
+    async login (req, res) {
+        let err = "";
+        let data = [];
+        try {
+            const {username, password} = req.body;
+
+            // Buscar el usuario
+            let user = await User.BuscarUsuario(username);                        
+            if (!user.length) {
+                err = "El usuario no existe";
+                return res(err != '' ? new Error(err):null, data);
+            }
+
+            // Comprobrar contraseña
+            let contraseñaValida = await User.CompararContraseña(password, user[0].password_users);
+            if (!contraseñaValida) {
+                err = "La contraseña es incorrecta";
+                return res(err != '' ? new Error(err):null, data);
+            }
+
+            //Generar el tokenID del acceso del usuario
+            let newToken = await User.generateToken(user[0]);                                    
+            return res(err != '' ? new Error(err):null, data=[user[0], newToken]);            
+        } catch (error) {                        
+            console.error(error);
+            err += error;
+            return res(err != '' ? new Error(err):null, data);
+        }                                  
+    }
 }
 
 module.exports = new userController();
