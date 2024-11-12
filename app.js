@@ -1,13 +1,44 @@
- var createError = require('http-errors');
-var express = require('express');
-var Handlebars = require('handlebars');
-var exphbs = require('express-handlebars')
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var bodyParse = require('body-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const bodyParse = require('body-parser');
+const logger = require('morgan');
+require('dotenv').config;
+const jwt = require('express-jwt');
+const jwtRsa = require('jwks-rsa');
+const Handlebars = require('handlebars');
+const exphbs = require('express-handlebars');
+const expressSession = require('express-session');
 
-var app = express();
+const app = express();
+
+//Sesiones de express
+app.use(expressSession({
+  secret: process.env.SESSION_SECRET || '123456',
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    secure: false,
+    maxAge: 3600000
+  }
+}));
+
+//JWT del servidor
+const auth = jwt({
+  secret: jwtRsa.expressJwtSecret({
+    cache: true,
+    rateLimit: 100,
+    jwksRequestsPerMinute: 10,
+    jwksUri: `http://${process.env.JWT_DOMAIN}/.well-known/jwks.json`
+  }),
+  audience: process.env.JWT_AUDIENCE,
+  issuer: `${process.env.JWT_ISSUER}/auth0`,
+  algorithms: [process.env.JWT_ALGORITHMS],
+  credentialsRequired: false
+});
+
+app.use(auth);
 
 app.set('port', process.env.PORT || 3000);
 app.use(logger('dev'));
@@ -38,6 +69,8 @@ var postsRouter = require('./routes/post');
 app.use('/post', postsRouter);
 var friendsRouter = require('./routes/friends');
 app.use('/friends', friendsRouter);
+const adminRouter = require('./routes/admin');
+app.use('/admin', adminRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
